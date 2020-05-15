@@ -65,8 +65,6 @@ class ViewController: UIViewController {
 class MaskView: UIView {
     let opening: CGRect
     
-    var closeHandler: () -> Void = {}
-    
     required init?(coder aDecoder: NSCoder) {
         preconditionFailure("Cannot initialize from coder")
     }
