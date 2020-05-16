@@ -14,20 +14,26 @@ class ViewController: UIViewController {
     @IBOutlet weak var viewMaskArea: UIView!
     @IBOutlet weak var switchOverlay: UISwitch!
 
-    var maskView: MaskView?
-    
+    // Lazy initialization of maskView, keeping init code out of viewDidLoad
+    lazy var maskView: MaskView = {
+        let buttonFrame = viewOpening.convert(viewOpening.bounds, to: viewMaskArea)
+        let mv = MaskView(frame: viewMaskArea.bounds, opening: buttonFrame)
+        mv.isHidden = true
+        return mv
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        viewMaskArea.addSubview(maskView) // will initialize lazy maskView
         switchOverlay.addTarget(self, action: #selector(switchValueDidChange), for: .valueChanged)
     }
     
     @objc func switchValueDidChange() {
-        if(switchOverlay.isOn)
-        {
-            addOverlay()
+        if(switchOverlay.isOn) {
+            maskView.isHidden = false
         }
         else {
-            removeOverlay()
+            maskView.isHidden = true
         }
     }
     
@@ -43,21 +49,6 @@ class ViewController: UIViewController {
         
         alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alertController, animated: true, completion:nil)
-    }
-    
-    func addOverlay() {
-        let buttonFrame = viewOpening.convert(viewOpening.bounds, to: viewMaskArea)
-        maskView = MaskView(frame: viewMaskArea.bounds, opening: buttonFrame)
-        if let created = maskView {
-            viewMaskArea.addSubview(created)
-        }
-    }
-    
-    func removeOverlay()
-    {
-        guard let created = maskView else {return}
-        created.removeFromSuperview()
-        maskView = nil
     }
 }
 
@@ -101,8 +92,7 @@ class MaskView: UIView {
     
     // Check where an event lands to decide whether to pass through this UIView
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-        if(opening.contains(point))
-        {
+        if(opening.contains(point)) {
             /* return false to send event up responder chain so maskView doesn't handle event
              over the opening, and instead controls within opening
              will receive it
