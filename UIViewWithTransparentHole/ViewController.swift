@@ -9,22 +9,23 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    
     @IBOutlet weak var viewOpening: UIView!
     @IBOutlet weak var viewMaskArea: UIView!
     @IBOutlet weak var switchOverlay: UISwitch!
-
+    
     // Lazy initialization of maskView, keeping init code out of viewDidLoad
     lazy var maskView: MaskView = {
-        let buttonFrame = viewOpening.convert(viewOpening.bounds, to: viewMaskArea)
-        let mv = MaskView(frame: viewMaskArea.bounds, opening: buttonFrame)
+        // convert viewOpening to viewMaskArea coordinate system
+        let openingFrame = viewOpening.convert(viewOpening.bounds, to: viewMaskArea)
+        let mv = MaskView(frame: viewMaskArea.bounds, opening: openingFrame)
         mv.isHidden = true
         return mv
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewMaskArea.addSubview(maskView) // will initialize lazy maskView
+        viewMaskArea.addSubview(maskView) // will lazy initialize maskView
         switchOverlay.addTarget(self, action: #selector(switchValueDidChange), for: .valueChanged)
     }
     
