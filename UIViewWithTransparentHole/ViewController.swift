@@ -70,11 +70,11 @@ class MaskView: UIView {
     func customInit() {
         let color = UIColor.label
         self.backgroundColor = color.withAlphaComponent(0.8)
-        self.maskLayer()
+        configureMask()
     }
     // Good techical resource for how to do the masking
     // https://www.calayer.com/core-animation/2016/05/22/cashapelayer-in-depth.html
-    func maskLayer() {
+    func configureMask() {
         // Create the mask layer
         let maskLayer = CAShapeLayer()
         // Create a path for the whole mask area
